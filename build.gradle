@@ -1,14 +1,15 @@
 apply plugin: 'eclipse'
 apply plugin: 'java-library'
-apply plugin: 'maven-publish'
+apply plugin: 'maven'
+apply plugin: 'signing'
 
 /* Java version */
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
 /* Identifier */
-group = 'com.github.ormfux.common'
-archivesBaseName = 'common-utils'
+group = 'com.github.orm-fux'
+archivesBaseName = 'ormfux-common-util'
 version = '1.5'
 
 /* dependencies */
@@ -41,6 +42,10 @@ repositories {
 }
 
 /* Maven artifact creation */
+signing {
+    sign configurations.archives
+}
+
 task javadocJar(type: Jar) {
 	from javadoc
 	classifier = 'javadoc'
@@ -51,20 +56,55 @@ task sourcesJar(type: Jar) {
 	classifier = 'sources'
 }
 
-publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			from components.java
-
-			artifact sourcesJar
-			artifact javadocJar
-
-			afterEvaluate {
-				artifactId = 'common-utils'
-			}
-		}
-	}
+artifacts {
+    archives javadocJar, sourcesJar
 }
+
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      pom.project {
+        name project.name
+        description 'A small collection of Java utilities for every-day use'
+        packaging 'jar'
+        url 'https://github.com/orm-fux/ormfux-common-util'
+
+        scm {
+          connection 'scm:git:https://github.com/orm-fux/ormfux-common-util.git'
+          developerConnection 'scm:git:git@github.com:orm-fux/ormfux-common-util.git'
+          url 'https://github.com/orm-fux/ormfux-common-util.git'
+        }
+
+        licenses {
+          license {
+         name 'The Unlicense'
+         url 'http://unlicense.org/'
+         distribution 'repo'
+          }
+        }
+
+        developers {
+          developer {
+            id 'orm-fux'
+            name 'FM'
+          }
+        }
+      }
+    }
+  }
+}
+
+
 
 if (JavaVersion.current().isJava8Compatible()) {
 	allprojects {
