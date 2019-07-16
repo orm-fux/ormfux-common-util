@@ -213,6 +213,8 @@ public final class NullableUtils {
      * @return The result of the function; {@code fallback} when the object or function result is {@code null} or the predicate evaluates to {@code false}.
      */
     public static <S, T> T checkAndRetrieve(final S object, final Predicate<S> predicate, final Function<S, T> function, final T fallback) {
+        java.util.Objects.requireNonNull(function);
+        
         if (check(object, predicate)) {
             return retrieve(object, function, fallback);
         } else {

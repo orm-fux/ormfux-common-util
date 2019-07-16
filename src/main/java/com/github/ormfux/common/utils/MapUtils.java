@@ -60,7 +60,7 @@ public final class MapUtils {
          * @param key Key.
          * @param value Value.
          */
-        public Entry(final K key, final V value) {
+        private Entry(final K key, final V value) {
             this.key = key;
             this.value = value;
         }
