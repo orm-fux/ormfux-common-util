@@ -18,6 +18,20 @@ public final class ListUtils {
     }
     
     /**
+     * Filters the collection for elements that satisfy the filter predicate and transforms matches with the mapping function. 
+     * 
+     * @param <S> source type
+     * @param <T> target type
+     * @param source source collection
+     * @param filterCondition the filter condition
+     * @param mapFunction mapping functor
+     * @return the collection with the filter and mapping result.
+     */
+    public static <S, T> List<T> filterAndMap(final Collection<? extends S> source, final Predicate<S> filterCondition, final Function<S, T> mapFunction) {
+        return (List<T>) CollectionUtils.filterAndMap(source, new ArrayList<>(), filterCondition, mapFunction);
+    }
+    
+    /**
      * Transforms the elements of a collection to a list of other typed elements.
      * 
      * @param <S> source type
