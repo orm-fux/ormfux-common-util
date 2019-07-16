@@ -40,6 +40,33 @@ public final class CollectionUtils {
     }
     
     /**
+     * Maps from source collection to a target collection. ONly elements from the source collection that satisfy the filter
+     * condition will be mapped and included in the result.
+     * 
+     * @param <S> source type
+     * @param <T> target type
+     * @param source source collection
+     * @param result target collection
+     * @param filterCondition the filter condition
+     * @param mapFunction mapping functor
+     * @return target collection
+     */
+    public static <S, T> Collection<T> filterAndMap(final Collection<? extends S> source, final Collection<T> result, final Predicate<S> filterCondition, final Function<S, T> mapFunction) {
+        Objects.requireNonNull(result);
+        Objects.requireNonNull(filterCondition);
+        Objects.requireNonNull(mapFunction);
+        
+        for (final S sourceElement : source) {
+            if (filterCondition.test(sourceElement)) {
+                result.add(mapFunction.apply(sourceElement));
+            }
+        }
+        
+        return result;
+    }
+    
+    
+    /**
      * Maps from source collection to a target collection.
      * 
      * @param <S> source type

@@ -187,6 +187,39 @@ public final class NullableUtils {
         return fallback;
     }
     
+    /**
+     * Applies the predicate to an Object in {@code null}-safe fashion. When the predicate evaluates to {@code true}
+     * applies the function to the Object and returns the result.
+     * 
+     * @param object The object.
+     * @param predicate The predicate to apply on the object.
+     * @param function The function to apply on the object. 
+     * 
+     * @return The result of the function; {@code null} when the object or function result is {@code null} or the predicate evaluates to {@code false}.
+     */
+    public static <S, T> T checkAndRetrieve(final S object, final Predicate<S> predicate, final Function<S, T> function) {
+        return checkAndRetrieve(object, predicate, function, null);
+    }
+     
+    /**
+     * Applies the predicate to an Object in {@code null}-safe fashion. When the predicate evaluates to {@code true}
+     * applies the function to the Object and returns the result (or fallback).
+     * 
+     * @param object The object.
+     * @param predicate The predicate to apply on the object.
+     * @param function The function to apply on the object. 
+     * @param fallback The value to fall back to when the object or function result is {@code null}.
+     * 
+     * @return The result of the function; {@code fallback} when the object or function result is {@code null} or the predicate evaluates to {@code false}.
+     */
+    public static <S, T> T checkAndRetrieve(final S object, final Predicate<S> predicate, final Function<S, T> function, final T fallback) {
+        if (check(object, predicate)) {
+            return retrieve(object, function, fallback);
+        } else {
+            return fallback;
+        }
+    }
+     
     /** 
      * The negation of the provided predicate. Allows for invocations like this:
      * <pre>check(obj, not(Type::testSomething))</pre> 
@@ -206,6 +239,16 @@ public final class NullableUtils {
       */
     public static <T> Predicate<Collection<? extends T>> isEmpty() {
         return Collection::isEmpty;
+    }
+    
+    /**
+     * A predicate for checking that a collection is <i>not</i> empty. Allows for invocations like this:
+     * <pre>check(obj, isNotEmpty())</pre>
+     * 
+     * @return The predicate representing the "not empty" condition.
+     */
+    public static <T> Predicate<Collection<? extends T>> isNotEmpty() {
+        return not(isEmpty());
     }
     
     /** 

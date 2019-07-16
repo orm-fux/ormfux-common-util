@@ -10,7 +10,7 @@ targetCompatibility = '1.8'
 /* Identifier */
 group = 'com.github.orm-fux'
 archivesBaseName = 'ormfux-common-util'
-version = '1.5'
+version = '1.5.1'
 
 /* dependencies */
 dependencies {
@@ -60,6 +60,7 @@ artifacts {
     archives javadocJar, sourcesJar
 }
 
+
 uploadArchives {
   repositories {
     mavenDeployer {
@@ -103,7 +104,6 @@ uploadArchives {
     }
   }
 }
-
 
 
 if (JavaVersion.current().isJava8Compatible()) {
