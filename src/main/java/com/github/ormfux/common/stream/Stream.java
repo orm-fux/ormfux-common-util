@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Spliterator;
@@ -38,7 +39,6 @@ public class Stream<T> {
     
     /**
      * Stream for a collection.
-     * 
      */
     public static <S> Stream<S> of(final Collection<S> collection) {
         return new Stream<>(collection.stream());
@@ -52,10 +52,38 @@ public class Stream<T> {
     }
     
     /**
+     * Stream for a map.
+     */
+    public static <K, V> Stream<Entry<K, V>> of(final Map<K, V> map) {
+        return of(map.entrySet());
+    }
+    
+    /**
+     * Stream for a standard Stream.
+     */
+    public static <S> Stream<S> of(final java.util.stream.Stream<S> stream) {
+        return new Stream<>(stream);
+    }
+    
+    /**
      * Parallel stream for a collection.
      */
     public static <S> Stream<S> parallelOf(final Collection<S> collection) {
         return new Stream<>(collection.parallelStream());
+    }
+    
+    /**
+     * Parallel Stream for a map.
+     */
+    public static <K, V> Stream<Entry<K, V>> parallelOf(final Map<K, V> map) {
+        return of(map.entrySet()).parallel();
+    }
+    
+    /**
+     * Parallel Stream for a standard Stream.
+     */
+    public static <S> Stream<S> parallelOf(final java.util.stream.Stream<S> stream) {
+        return new Stream<>(stream.parallel());
     }
     
     /**
@@ -135,13 +163,36 @@ public class Stream<T> {
     public List<T> filterToList(final Predicate<? super T> predicate) {
         return wrappedStream.filter(predicate).collect(Collectors.toList());
     }
-
+    
     /**
      * Same as {@link java.util.stream.Stream#filter(Predicate)}, but also
      * collects the result directly in a set.
      */
     public Set<T> filterToSet(final Predicate<? super T> predicate) {
         return wrappedStream.filter(predicate).collect(Collectors.toSet());
+    }
+
+    /**
+     * Convenience method to filter and collect the stream content in a map.
+     * 
+     * @param keyMapper Function to create the key from a stream entry.
+     * @param valueMapper Function to create the value from a stream entry.
+     */
+    public <K, V> Map<K, V> fiterToMap(final Predicate<? super T> predicate,
+                                  final Function<? super T, ? extends K> keyMapper,
+                                  final Function<? super T, ? extends V> valueMapper) {
+        return wrappedStream.filter(predicate).collect(Collectors.toMap(keyMapper, valueMapper));
+    }
+
+    /**
+     * Convenience method to filter and collect the stream content in a map. The values are
+     * simply the stream entries.
+     * 
+     * @param keyMapper Function to create the key from a stream entry.
+     */
+    public <K> Map<K, T> filterToMap(final Predicate<? super T> predicate, 
+                                     final Function<? super T, ? extends K> keyMapper) {
+        return wrappedStream.filter(predicate).collect(Collectors.toMap(keyMapper, Function.identity()));
     }
 
     /**
@@ -243,15 +294,18 @@ public class Stream<T> {
     }
 
     /**
+     * In contrast to the original Stream implementation this is not a terminal operation.
+     * 
      * @see java.util.stream.Stream#forEach(Consumer)
      */
-    public void forEach(final Consumer<? super T> action) {
-        wrappedStream.forEach(action);
+    public Stream<T> forEach(final Consumer<? super T> action) {
+        return map(elem -> {action.accept(elem); return elem;});
     }
 
     /**
      * @see java.util.stream.Stream#forEachOrdered(Consumer)
      */
+    @Deprecated
     public void forEachOrdered(final Consumer<? super T> action) {
         wrappedStream.forEachOrdered(action);
     }
