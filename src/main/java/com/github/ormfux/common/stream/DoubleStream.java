@@ -170,15 +170,15 @@ public class DoubleStream {
     /**
      * @see java.util.stream.DoubleStream#forEach(Consumer)
      */
-    public void forEach(final DoubleConsumer action) {
-        wrappedStream.forEach(action);
+    public DoubleStream forEach(final DoubleConsumer action) {
+        return map(element -> { action.accept(element); return element; });
     }
 
     /**
-     * @see java.util.stream.DoubleStream#forEachOrdered(Consumer)
+     * @see java.util.stream.DoubleStream#forEach(Consumer)
      */
-    public void forEachOrdered(final DoubleConsumer action) {
-        wrappedStream.forEachOrdered(action);
+    public void consume(final DoubleConsumer action) {
+        wrappedStream.forEach(action);
     }
 
     /**

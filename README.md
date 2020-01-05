@@ -14,17 +14,24 @@ Maven dependency:
 <dependency>
   <groupId>com.github.orm-fux</groupId>
   <artifactId>ormfux-common-util</artifactId>
-  <version>1.6.1</version>
+  <version>1.6.2</version>
 </dependency>
 ```
 
 Gradle dependency:
 
 ```
-compile group: 'com.github.orm-fux', name: 'ormfux-common-util', version: '1.6.1'
+compile group: 'com.github.orm-fux', name: 'ormfux-common-util', version: '1.6.2'
 ```
 
 ## Version History
+
+**1.6.2**
+
+Extended `Stream` API:
+
+* Added final operation `consume` as more precisely named version of the standard `Stream`'s `forEach`.
+* Added initialization method to "convert" an `Optional` containing a collection into a `Stream` of `Optional`s of the collection content.
 
 **1.6.1**
 

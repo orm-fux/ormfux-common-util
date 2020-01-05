@@ -187,17 +187,19 @@ public class IntStream {
     }
 
     /**
+     * Like default, but not terminal.
+     * 
      * @see java.util.stream.IntStream#forEach(Consumer)
      */
-    public void forEach(final IntConsumer action) {
-        wrappedStream.forEach(action);
+    public IntStream forEach(final IntConsumer action) {
+        return map(element -> { action.accept(element); return element; });
     }
 
     /**
-     * @see java.util.stream.IntStream#forEachOrdered(Consumer)
+     * @see java.util.stream.IntStream#forEach(Consumer)
      */
-    public void forEachOrdered(final IntConsumer action) {
-        wrappedStream.forEachOrdered(action);
+    public void consume(final IntConsumer action) {
+        wrappedStream.forEach(action);
     }
 
     /**
