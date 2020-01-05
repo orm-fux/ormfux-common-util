@@ -3,6 +3,7 @@ package com.github.ormfux.common.stream;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -63,6 +64,20 @@ public class Stream<T> {
      */
     public static <S> Stream<S> of(final java.util.stream.Stream<S> stream) {
         return new Stream<>(stream);
+    }
+    
+    /**
+     * A stream of `Optional` from an `Optional` that contains a collection.
+     * 
+     * @param optional The Optional with the Collection.
+     * @return The Stream of Optional elements in the Collection.
+     */
+    public static <S> Stream<Optional<S>> of(final Optional<Collection<S>> optional) {
+        if (optional.isPresent()) {
+            return of(optional.get()).map(Optional::ofNullable);
+        } else {
+            return of(Collections.emptyList());
+        }
     }
     
     /**
@@ -303,11 +318,12 @@ public class Stream<T> {
     }
 
     /**
-     * @see java.util.stream.Stream#forEachOrdered(Consumer)
+     * Replacement of the standard Stream's forEach implementation.
+     * 
+     * @see java.util.stream.Stream#forEach(Consumer)
      */
-    @Deprecated
-    public void forEachOrdered(final Consumer<? super T> action) {
-        wrappedStream.forEachOrdered(action);
+    public void consume(final Consumer<? super T> action) {
+        wrappedStream.forEach(action);
     }
 
     /**

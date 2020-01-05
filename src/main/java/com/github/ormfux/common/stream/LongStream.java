@@ -178,17 +178,19 @@ public class LongStream {
     }
 
     /**
+     * Like default, but not terminal.
+     * 
      * @see java.util.stream.LongStream#forEach(Consumer)
      */
-    public void forEach(final LongConsumer action) {
-        wrappedStream.forEach(action);
+    public LongStream forEach(final LongConsumer action) {
+        return map(element -> { action.accept(element); return element; });
     }
 
     /**
-     * @see java.util.stream.LongStream#forEachOrdered(Consumer)
+     * @see java.util.stream.LongStream#forEach(Consumer)
      */
-    public void forEachOrdered(final LongConsumer action) {
-        wrappedStream.forEachOrdered(action);
+    public void consume(final LongConsumer action) {
+        wrappedStream.forEach(action);
     }
 
     /**
